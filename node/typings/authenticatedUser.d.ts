@@ -1,0 +1,3 @@
+interface AuthenticatedUser {
+  user: string
+}

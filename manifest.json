@@ -1,0 +1,94 @@
+{
+  "name": "safedata",
+  "vendor": "vtex",
+  "version": "0.1.0",
+  "title": "Safedata",
+  "description": "Reference app for VTEX IO Services",
+  "mustUpdateAt": "2018-01-04",
+  "categories": [],
+  "dependencies": {},
+  "builders": {
+    "node": "6.x",
+    "docs": "0.x"
+  },
+  "scripts": {
+    "prereleasy": "bash lint.sh"
+  },
+  "credentialType": "absolute",
+  "policies": [
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "vtexid.vtex.com.br",
+        "path": "api/"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "api.vtex.com",
+        "path": "/api/dataentities/*"
+      }
+    },
+    {
+      "name": "ADMIN_DS"
+    },
+    {
+      "name": "colossus-fire-event"
+    },
+    {
+      "name": "colossus-write-logs"
+    }
+  ],
+  "settingsSchema": {
+    "title": "Safedata",
+    "type": "object",
+    "properties": {
+      "updateableClientFields": {
+        "title": "Updateable fields on client (CL) entity",
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "entityConfigurations": {
+        "title": "Entity Configurations",
+        "type": "array",
+        "items": {
+          "default": [],
+          "type": "object",
+          "properties":{
+            "entityAcronym": {
+              "type": "string",
+              "title": "Entity acronym on MasterData"
+            },
+            "fieldToMatchOnEntity":{
+              "type": "string",
+              "title": "Field to match on current entity"
+            },
+            "fieldToMatchOnClient":{
+              "type": "string",
+              "title": "Field to match on the CL entity"
+            },
+            "canCreate": {
+              "type": "boolean",
+              "title": "Allow creating objects anonymously?"
+            },
+            "canDelete": {
+              "type": "boolean",
+              "title": "Is the user allowed to delete their own records?"
+            },
+            "updateableFields": {
+              "type": "array",
+              "title": "Which fields is the user allowed to update?",
+              "items": {
+                "type": "string"
+              }
+            }
+          }          
+        }
+      }
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
+}
