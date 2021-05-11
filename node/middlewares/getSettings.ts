@@ -1,4 +1,5 @@
 import clConfiguration from '../constants/clConfiguration'
+import logResult from '../utils/log'
 
 export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
   const {
@@ -10,7 +11,7 @@ export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
     process.env.VTEX_APP_ID as string
   )) as Settings
 
-  ctx.state.entitySettings =
+  const entitySettings =
     entity === 'CL'
       ? {
           ...clConfiguration,
@@ -19,7 +20,19 @@ export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
       : appSettings.entityConfigurations.find(
           (value) => entity === value.entityAcronym
         )
+
+  if (!entitySettings) {
+    ctx.status = 403
+    logResult({
+      ctx,
+      result: 'forbidden',
+      reason: 'entity settings not configured',
+    })
+
+    return
+  }
+
+  ctx.state.entitySettings = entitySettings
+
   await next()
 }
-
-// function getCL() {}

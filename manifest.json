@@ -57,16 +57,16 @@
         "items": {
           "default": [],
           "type": "object",
-          "properties":{
+          "properties": {
             "entityAcronym": {
               "type": "string",
               "title": "Entity acronym on MasterData"
             },
-            "fieldToMatchOnEntity":{
+            "fieldToMatchOnEntity": {
               "type": "string",
               "title": "Field to match on current entity"
             },
-            "fieldToMatchOnClient":{
+            "fieldToMatchOnClient": {
               "type": "string",
               "title": "Field to match on the CL entity"
             },
@@ -85,7 +85,7 @@
                 "type": "string"
               }
             }
-          }          
+          }
         }
       }
     }
