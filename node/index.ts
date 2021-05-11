@@ -9,6 +9,7 @@ import { search } from './middlewares/search'
 import { getOperation } from './middlewares/getOperation'
 import { validateLogin } from './middlewares/validateLogin'
 import { validateDocumentId } from './middlewares/validateDocumentId'
+import { create } from './middlewares/create'
 
 const TIMEOUT_MS = 800
 
@@ -50,22 +51,21 @@ declare global {
   }
 }
 
+const getInformation = [getAuthInfo, getSettings, getOperation]
+
 // Export a service that defines route handlers and client options.
 export default new Service({
   clients,
   routes: {
+    documents: method({
+      POST: [...getInformation, validateLogin, create],
+      PATCH: [...getInformation, validateLogin, create],
+    }),
     documentId: method({
-      GET: [
-        getAuthInfo,
-        getSettings,
-        getOperation,
-        validateLogin,
-        validateDocumentId,
-        get,
-      ],
+      GET: [...getInformation, validateLogin, validateDocumentId, get],
     }),
     search: method({
-      GET: [getAuthInfo, getSettings, getOperation, validateLogin, search],
+      GET: [...getInformation, validateLogin, search],
     }),
   },
 })
