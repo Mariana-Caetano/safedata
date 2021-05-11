@@ -1,39 +1,22 @@
-import type { MasterData } from '@vtex/api'
-
 import { parseFields } from '../utils/fieldsParser'
+import getCL from '../utils/getCL'
+import logResult from '../utils/log'
 
 export async function get(ctx: Context, next: () => Promise<unknown>) {
   const {
-    state: {
-      entity: dataEntity,
-      id,
-      authenticatedUser,
-      isLoggedIn,
-      entitySettings,
-    },
+    state: { entity: dataEntity, id, authenticatedUser, entitySettings },
     clients: { masterdata },
   } = ctx
 
-  if (!id) {
-    ctx.status = 400
-
-    return
-  }
-
-  if (!isLoggedIn) {
-    ctx.status = 401
-
-    return
-  }
-
-  if (!entitySettings) {
-    ctx.status = 403
-
-    return
-  }
-
   const parsedFields = parseFields(ctx.query._fields)
-  const client = await getCL(authenticatedUser?.user, masterdata)
+  const client = await getCL(
+    authenticatedUser?.user,
+    masterdata,
+    dataEntity === 'CL'
+      ? [...parsedFields, entitySettings.fieldToMatchOnClient]
+      : [entitySettings.fieldToMatchOnClient]
+  )
+
   const document =
     dataEntity === 'CL'
       ? client
@@ -45,6 +28,11 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
 
   if (!document) {
     ctx.status = 404
+    logResult({
+      ctx,
+      result: 'notfound',
+      reason: `document not found on entity ${dataEntity}: id ${id}`,
+    })
 
     return
   }
@@ -56,35 +44,29 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
       client[entitySettings?.fieldToMatchOnClient]
   ) {
     ctx.status = 403
+    logResult({
+      ctx,
+      result: 'forbidden',
+      reason: `document with matched field ${
+        document[entitySettings?.fieldToMatchOnEntity]
+      } does not belong to user ${client.email}`,
+    })
 
     return
   }
 
   if (document === client) {
-    const hasEmail = parsedFields.some((value) =>
-      ['_all', 'email'].includes(value)
+    const hasMatchedField = parsedFields.some((value) =>
+      ['_all', entitySettings.fieldToMatchOnEntity].includes(value)
     )
 
-    if (!hasEmail) delete document.email
+    if (!hasMatchedField && document[entitySettings.fieldToMatchOnEntity]) {
+      delete document[entitySettings.fieldToMatchOnEntity]
+    }
   }
 
   ctx.body = document
   ctx.status = 200
 
   await next()
-}
-
-async function getCL(email: string | undefined, masterdata: MasterData) {
-  if (!email) return undefined
-  const document = await masterdata.searchDocuments<MasterDataEntity>({
-    dataEntity: 'CL',
-    where: `email=${email}`,
-    fields: ['_all'],
-    pagination: {
-      page: 1,
-      pageSize: 1,
-    },
-  })
-
-  return document[0]
 }

@@ -2,10 +2,13 @@ import type { ClientsConfig, ServiceContext, RecorderState } from '@vtex/api'
 import { LRUCache, method, Service } from '@vtex/api'
 
 import { Clients } from './clients'
-import { authenticate } from './middlewares/authenticate'
+import { getAuthInfo } from './middlewares/getAuthInfo'
 import { get } from './middlewares/get'
 import { getSettings } from './middlewares/getSettings'
 import { search } from './middlewares/search'
+import { getOperation } from './middlewares/getOperation'
+import { validateLogin } from './middlewares/validateLogin'
+import { validateDocumentId } from './middlewares/validateDocumentId'
 
 const TIMEOUT_MS = 800
 
@@ -38,9 +41,10 @@ declare global {
 
   // The shape of our State object found in `ctx.state`. This is used as state bag to communicate between middlewares.
   interface State extends RecorderState {
+    operation: 'create' | 'read' | 'update' | 'delete'
     entity: string
-    entitySettings?: EntityConfiguration
-    id?: string
+    entitySettings: EntityConfiguration
+    id: string
     isLoggedIn: boolean
     authenticatedUser: AuthenticatedUser | undefined
   }
@@ -50,12 +54,18 @@ declare global {
 export default new Service({
   clients,
   routes: {
-    // `status` is the route ID from service.json. It maps to an array of middlewares (or a single handler).
-    get: method({
-      GET: [authenticate, getSettings, get],
+    documentId: method({
+      GET: [
+        getAuthInfo,
+        getSettings,
+        getOperation,
+        validateLogin,
+        validateDocumentId,
+        get,
+      ],
     }),
     search: method({
-      GET: [authenticate, getSettings, search],
+      GET: [getAuthInfo, getSettings, getOperation, validateLogin, search],
     }),
   },
 })
