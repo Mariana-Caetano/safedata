@@ -1,7 +1,7 @@
 {
   "name": "safedata",
   "vendor": "vtex",
-  "version": "0.1.0",
+  "version": "0.2.0-beta.1",
   "title": "Safedata",
   "description": "Reference app for VTEX IO Services",
   "mustUpdateAt": "2018-01-04",
@@ -46,6 +46,7 @@
     "properties": {
       "updateableClientFields": {
         "title": "Updateable fields on client (CL) entity",
+        "default": [],
         "type": "array",
         "items": {
           "type": "string"
@@ -54,8 +55,17 @@
       "entityConfigurations": {
         "title": "Entity Configurations",
         "type": "array",
+        "default": [
+          {
+            "entityAcronym": "AD",
+            "fieldToMatchOnEntity": "userId",
+            "fieldToMatchOnClient": "id",
+            "canCreate": true,
+            "canDelete": true,
+            "updateableFields": []
+          }
+        ],
         "items": {
-          "default": [],
           "type": "object",
           "properties": {
             "entityAcronym": {

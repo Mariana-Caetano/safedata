@@ -10,6 +10,11 @@ import { getOperation } from './middlewares/getOperation'
 import { validateLogin } from './middlewares/validateLogin'
 import { validateDocumentId } from './middlewares/validateDocumentId'
 import { create } from './middlewares/create'
+import { getDocument } from './middlewares/getDocument'
+import { validateDocumentOwnership } from './middlewares/validateDocumentOwnership'
+import { update } from './middlewares/update'
+import { updatePartial } from './middlewares/updatePartial'
+import { getClient } from './middlewares/getClient'
 
 const TIMEOUT_MS = 800
 
@@ -42,27 +47,54 @@ declare global {
 
   // The shape of our State object found in `ctx.state`. This is used as state bag to communicate between middlewares.
   interface State extends RecorderState {
-    operation: 'create' | 'read' | 'update' | 'delete'
+    operation: 'create' | 'read' | 'update' | 'delete' | 'partialUpdate'
     entity: string
     entitySettings: EntityConfiguration
     id: string
     isLoggedIn: boolean
     authenticatedUser: AuthenticatedUser | undefined
+    document: MasterDataEntity
+    client: MasterDataEntity
   }
 }
 
-const getInformation = [getAuthInfo, getSettings, getOperation]
+const getInformation = [getAuthInfo, getSettings, getOperation, getClient]
+const getAndValidateDocument = [getDocument, validateDocumentOwnership]
 
 // Export a service that defines route handlers and client options.
 export default new Service({
   clients,
   routes: {
     documents: method({
-      POST: [...getInformation, validateLogin, create],
-      PATCH: [...getInformation, validateLogin, create],
+      POST: [
+        ...getInformation,
+        validateLogin,
+        ...getAndValidateDocument,
+        create,
+      ],
+      PATCH: [
+        ...getInformation,
+        validateLogin,
+        ...getAndValidateDocument,
+        create,
+      ],
     }),
     documentId: method({
       GET: [...getInformation, validateLogin, validateDocumentId, get],
+      PUT: [
+        ...getInformation,
+        validateLogin,
+        ...getAndValidateDocument,
+        validateDocumentId,
+        update,
+      ],
+      PATCH: [
+        ...getInformation,
+        validateLogin,
+        ...getAndValidateDocument,
+        validateDocumentId,
+        updatePartial,
+      ],
     }),
     search: method({
       GET: [...getInformation, validateLogin, search],

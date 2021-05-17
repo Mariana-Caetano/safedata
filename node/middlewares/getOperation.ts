@@ -12,8 +12,10 @@ export async function getOperation(ctx: Context, next: () => Promise<unknown>) {
     ctx.state.operation = 'read'
   } else if (id === 'documents' && ['PATCH', 'POST'].includes(method)) {
     ctx.state.operation = 'create'
-  } else if (id === 'documentId' && ['PATCH', 'PUT'].includes(method)) {
+  } else if (id === 'documentId' && ['PUT'].includes(method)) {
     ctx.state.operation = 'update'
+  } else if (id === 'documentId' && ['PATCH'].includes(method)) {
+    ctx.state.operation = 'partialUpdate'
   } else if (id === 'documentId' && method === 'DELETE') {
     ctx.state.operation = 'delete'
   } else {
