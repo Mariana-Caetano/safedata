@@ -1,39 +1,20 @@
 import { parseFields } from '../utils/fieldsParser'
-import getCL from '../utils/getCL'
 import logResult from '../utils/log'
 
 export async function search(ctx: Context, next: () => Promise<unknown>) {
   const {
-    state: {
-      entity: dataEntity,
-      authenticatedUser,
-      isLoggedIn,
-      entitySettings,
-    },
+    state: { entity: dataEntity, client, entitySettings },
     clients: { masterdata },
   } = ctx
 
-  if (!isLoggedIn) {
-    ctx.status = 401
-    logResult({ ctx, result: 'unauthorized', reason: 'user is not logged in' })
-
-    return
-  }
-
   const parsedFields = parseFields(ctx.query._fields)
-  const client = await getCL(
-    authenticatedUser?.user,
-    masterdata,
-    dataEntity === 'CL'
-      ? [...parsedFields, entitySettings.fieldToMatchOnClient]
-      : [entitySettings.fieldToMatchOnClient]
-  )
 
   const documents =
     dataEntity === 'CL'
       ? [client]
       : await masterdata.searchDocuments<MasterDataEntity>({
           dataEntity,
+          schema: ctx.query._schema,
           where:
             ctx.query._where ??
             `${entitySettings?.fieldToMatchOnEntity}=${
@@ -42,8 +23,8 @@ export async function search(ctx: Context, next: () => Promise<unknown>) {
           sort: ctx.query._sort,
           fields: [...parsedFields, entitySettings.fieldToMatchOnEntity],
           pagination: {
-            page: 1,
-            pageSize: 999,
+            page: ctx.query._page ?? 1,
+            pageSize: ctx.query._pageSize ?? 999,
           },
         })
 
@@ -78,6 +59,7 @@ export async function search(ctx: Context, next: () => Promise<unknown>) {
 
   ctx.body = validDocuments
   ctx.status = 200
+  ctx.set('cache-control', 'no-cache')
 
   await next()
 }

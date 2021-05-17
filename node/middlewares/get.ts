@@ -1,21 +1,13 @@
 import { parseFields } from '../utils/fieldsParser'
-import getCL from '../utils/getCL'
 import logResult from '../utils/log'
 
 export async function get(ctx: Context, next: () => Promise<unknown>) {
   const {
-    state: { entity: dataEntity, id, authenticatedUser, entitySettings },
+    state: { entity: dataEntity, id, entitySettings, client },
     clients: { masterdata },
   } = ctx
 
   const parsedFields = parseFields(ctx.query._fields)
-  const client = await getCL(
-    authenticatedUser?.user,
-    masterdata,
-    dataEntity === 'CL'
-      ? [...parsedFields, entitySettings.fieldToMatchOnClient]
-      : [entitySettings.fieldToMatchOnClient]
-  )
 
   const document =
     dataEntity === 'CL'
@@ -23,7 +15,7 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
       : ((await masterdata.getDocument({
           dataEntity,
           id,
-          fields: parsedFields,
+          fields: [...parsedFields, entitySettings.fieldToMatchOnEntity],
         })) as MasterDataEntity)
 
   if (!document) {
@@ -49,24 +41,25 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
       result: 'forbidden',
       reason: `document with matched field ${
         document[entitySettings?.fieldToMatchOnEntity]
-      } does not belong to user ${client.email}`,
+      } does not belong to user ${
+        client[entitySettings?.fieldToMatchOnClient]
+      }`,
     })
 
     return
   }
 
-  if (document === client) {
-    const hasMatchedField = parsedFields.some((value) =>
-      ['_all', entitySettings.fieldToMatchOnEntity].includes(value)
-    )
+  const hasMatchedField = parsedFields.some((value) =>
+    ['_all', entitySettings.fieldToMatchOnEntity].includes(value)
+  )
 
-    if (!hasMatchedField && document[entitySettings.fieldToMatchOnEntity]) {
-      delete document[entitySettings.fieldToMatchOnEntity]
-    }
+  if (!hasMatchedField && document[entitySettings.fieldToMatchOnEntity]) {
+    delete document[entitySettings.fieldToMatchOnEntity]
   }
 
   ctx.body = document
   ctx.status = 200
+  ctx.set('cache-control', 'no-cache')
 
   await next()
 }

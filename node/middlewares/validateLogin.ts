@@ -15,6 +15,8 @@ export async function validateLogin(
   ) {
     ctx.status = 401
     logResult({ ctx, result: 'unauthorized', reason: 'user is not logged in' })
+
+    return
   }
 
   await next()

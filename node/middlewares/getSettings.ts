@@ -1,3 +1,4 @@
+import adConfiguration from '../constants/adConfiguration'
 import clConfiguration from '../constants/clConfiguration'
 import logResult from '../utils/log'
 
@@ -11,15 +12,19 @@ export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
     process.env.VTEX_APP_ID as string
   )) as Settings
 
-  const entitySettings =
+  let entitySettings =
     entity === 'CL'
       ? {
           ...clConfiguration,
           ...{ updateableFields: appSettings.updateableClientFields },
         }
-      : appSettings.entityConfigurations.find(
+      : appSettings.entityConfigurations?.find(
           (value) => entity === value.entityAcronym
         )
+
+  if (!entitySettings && entity === 'AD') {
+    entitySettings = adConfiguration
+  }
 
   if (!entitySettings) {
     ctx.status = 403
