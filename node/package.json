@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "co-body": "^6.0.0",
-    "ramda": "^0.25.0"
+    "ramda": "^0.25.0",
+    "ts-jest": "^26.5.6"
   },
   "devDependencies": {
     "@types/co-body": "^0.0.3",
@@ -14,7 +15,17 @@
     "typescript": "3.9.7"
   },
   "scripts": {
-    "lint": "tsc --noEmit --pretty"
+    "lint": "tsc --noEmit --pretty",
+    "test": "jest"
+  },
+  "jest": {
+    "testMatch": [
+      "**/__tests__/**/*.+(ts|tsx|js)",
+      "**/?(*.)+(spec|test).+(ts|tsx|js)"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    }
   },
   "version": "0.2.0"
 }

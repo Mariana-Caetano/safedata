@@ -19,7 +19,7 @@ export async function getAuthInfo(ctx: Context, next: () => Promise<unknown>) {
 
   ctx.state.entity = entity
   ctx.state.id = id
-  ctx.state.isLoggedIn = isLoggedIn
+  ctx.state.isLoggedIn = isLoggedIn && authenticatedUser !== undefined
   ctx.state.authenticatedUser = authenticatedUser
   await next()
 }
