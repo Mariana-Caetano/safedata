@@ -1,6 +1,6 @@
 {
   "name": "Safedata",
-  "headline": "Um middleware de autorização para trabalhar com dados sensíveis no MasterData,",
+  "headline": "Um middleware de autorização para trabalhar com dados sensíveis no MasterData.",
   "overview": "Este app expôe rotas públicas para entidades privadas no MasterData, sempre garantindo que o consumidor da informação pode apenas acessar e alterar seus próprios dados.\\nPromove obtenção segura da informação e encoraja a manter todas as entidades do MasterData como privadas.",
   "features": [
     "Utilize todas as funcionalidades do MasterData e guarde dados sensíveis de forma segura", 
