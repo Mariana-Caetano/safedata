@@ -1,0 +1,16 @@
+{
+    "name": "Safedata",
+    "headline": "An authorization middleware to work with sensitive data on MasterData.",
+    "overview": "This app exposes public routes to private entities on MasterData, always ensuring that the user can only access and change their own data.\\nIt promotes secure retrieval of information and encourages setting all MasterData entities to private.",
+    "features": [
+      "Make use of all MasterData features for storing personal information safely and securely",
+      "Use the same syntax as if you were dealing with MasterData",
+      "Allow anonymous creation for specific entities",
+      "Never set any MasterData entities to public again!"
+    ],
+    "additionalInformation": "This app is primarily a developer tool. It works with CL/AD entities automatically, however it allows configuring any other entities through its settings. You can find further information about the inner workings of the app on the documentation.",
+    "websiteURL": "https://vtex.com/",
+    "support": {
+      "url": "https://support.vtex.com/hc/requests"
+    }
+}
