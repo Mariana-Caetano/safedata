@@ -2,16 +2,16 @@
 
 # SafeData
 
-The SafeData app provides an easy to use, configurable middleware to retrieve and save MasterData (V1 & V2) information directly on the front-end.
+The SafeData app provides an easy to use, configurable middleware to retrieve and save MasterData (V1 & V2) information directly on the front-end (or through another back-end as well).
 
-It works by acting as an validation/authentication layer on top of masterdata api to ensure the data being queried/changed belongs to the user executing the action.
+It works by acting as an validation/authorization layer on top of masterdata api to ensure the data being queried/changed belongs to the user executing the action.
 
 ## Getting Started
 
-**SafeData is still in beta phase**. To install it, you need to use the command-line interface:
+You can install it through the app store or the command-line interface:
 
 ```
-vtex install vtex.safedata@0.2.0-beta.1
+vtex install vtex.safedata@0.x
 ```
 
 The base configurations for CL (Client) and AD (Address) entities are automatically configured but can be changed by using the app settings interface (this is currently a work-in-progress)
@@ -55,7 +55,7 @@ This is done through a field comparison between `CL` and whatever entity is bein
 
 It is possible to allow other MasterData entities to follow these rules by registering them on the app settings:
 
-![SafeData Config](images/safedata-config.png)
+![SafeData Config](https://user-images.githubusercontent.com/1629129/119353802-b9405d80-bc79-11eb-95b2-9cbc5574fb0a.png)
 
 *Please be aware that the field options are currently unavailable, and users are allowed to update any fields.*
 

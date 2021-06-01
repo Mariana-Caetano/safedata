@@ -1,0 +1,16 @@
+{
+  "name": "Safedata",
+  "headline": "Un middleware de autorización para trabajar con datos confidenciales en MasterData.",
+  "overview": "Esta aplicación expone rutas públicas a entidades privadas en MasterData, siempre asegurando que el usuario solo pueda acceder y cambiar sus propios datos. \\ nFomenta la recuperación segura de información y alienta a configurar todas las entidades MasterData como privadas.",
+  "features": [
+    "Utilice todas las funciones de MasterData para almacenar información personal de forma segura",
+    "Use la misma sintaxis que si estuviera tratando con MasterData",
+    "Permita la creación anónima para entidades específicas",
+    "¡Nunca vuelva a establecer ninguna entidad MasterData como pública!"
+  ],
+  "additionalInformation": "Esta aplicación es principalmente una developer tool. Funciona con entidades CL / AD de forma automática y permite configurar cualquier otra entidad a través de su configuración. Puede encontrar más información sobre el funcionamiento interno de la aplicación en la documentación.",
+  "websiteURL": "https://vtex.com/",
+  "support": {
+    "url": "https://support.vtex.com/hc/requests"
+  }
+}
