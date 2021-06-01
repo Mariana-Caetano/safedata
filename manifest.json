@@ -1,7 +1,7 @@
 {
   "name": "safedata",
   "vendor": "vtex",
-  "version": "0.2.0-beta.1",
+  "version": "0.2.0",
   "title": "Safedata",
   "description": "Reference app for VTEX IO Services",
   "mustUpdateAt": "2018-01-04",
