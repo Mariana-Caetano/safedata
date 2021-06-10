@@ -22,7 +22,11 @@ Upon installing, some public routes will become instantly available to use.
 
 SafeData respects the same MasterData routes which can be accessed by replacing `api/dataentities` for `safedata`:
 
-`GET /safedata/AD/search?_where=addressName=12345`
+Suppose your account name is `myaccount`:
+`GET https://myaccount.myvtex.com/safedata/AD/search?_where=addressName=12345`
+
+You can also use `vtexcommercestable` if you prefix the request with `api/io`, like this:
+`GET https://myaccount.vtexcommercestable.com.br/api/io/safedata/AD/search?_where=addressName=12345`
 
 In this case, we're conducting a search on the address entity.
 
