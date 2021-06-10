@@ -76,6 +76,8 @@ This allows users to update their personal information during the checkout proce
 
 Once a purchase is finished, a complete profile is generated, and in order to update this information again the user has to log in (as expected by design)
 
+Please be aware that currently ONLY the `PATCH /documents` route supports the `_orderFormId` parameter, and that it only works with entities that contain an `email` field in their schema.
+
 ## How does SafeData work?
 
 The whole process is based on the `CL` entity, which is used as a guide to identify the user. First, we reach out to Vtex ID to confirm the `StoreUserAuthToken` is valid and get the user e-mail. Then we retrieve only the necessary fields on the `CL` entity to ensure the user is manipulating/obtaining only entities that belongs to them.
