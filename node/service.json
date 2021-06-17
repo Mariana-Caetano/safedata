@@ -1,10 +1,15 @@
 {
-  "memory": 64,
+  "memory": 256,
   "ttl": 30,
-  "timeout": 2,
+  "timeout": 5,
   "minReplicas": 2,
-  "maxReplicas": 4,
-  "workers": 1,
+  "maxReplicas": 40,
+  "cpu": {
+    "type": "shared",
+    "value": 20,
+    "scalingPercentage": 95
+  },
+  "workers": 4,
   "routes": {
     "documents": {
       "path": "/safedata/:entity/documents",

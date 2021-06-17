@@ -1,4 +1,5 @@
 import logResult from '../utils/log'
+import { incrementRequestCounter } from '../utils/requestCounters'
 
 export async function create(ctx: Context, next: () => Promise<unknown>) {
   const {
@@ -38,6 +39,14 @@ export async function create(ctx: Context, next: () => Promise<unknown>) {
         reason: `can't create this entity without authentication: ${dataEntity}`,
       })
 
+      incrementRequestCounter({
+        operation: ctx.state.operation,
+        route: ctx.vtex.route.id,
+        entity: dataEntity,
+        account: ctx.vtex.account,
+        statusCode: ctx.status,
+      })
+
       return
     }
   } else if (
@@ -55,6 +64,14 @@ export async function create(ctx: Context, next: () => Promise<unknown>) {
 
   ctx.body = document
   ctx.status = 200
+
+  incrementRequestCounter({
+    operation: ctx.state.operation,
+    route: ctx.vtex.route.id,
+    entity: dataEntity,
+    account: ctx.vtex.account,
+    statusCode: ctx.status,
+  })
 
   await next()
 }
@@ -120,6 +137,14 @@ async function hasInvalidOrderFormData({
       reason: `orderForm email information (${orderForm.clientProfileData?.email}) does not match provided email (${document.email})`,
     })
 
+    incrementRequestCounter({
+      operation: ctx.state.operation,
+      route: ctx.vtex.route.id,
+      entity: dataEntity,
+      account: ctx.vtex.account,
+      statusCode: ctx.status,
+    })
+
     return true
   }
 
@@ -161,6 +186,14 @@ async function hasInvalidMatchingDocument({
       } - value ${
         document[entitySettings?.fieldToMatchOnEntity]
       } already belongs to a user`,
+    })
+
+    incrementRequestCounter({
+      operation: ctx.state.operation,
+      route: ctx.vtex.route.id,
+      entity: dataEntity,
+      account: ctx.vtex.account,
+      statusCode: ctx.status,
     })
 
     return true

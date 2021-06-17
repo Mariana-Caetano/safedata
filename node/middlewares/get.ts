@@ -1,10 +1,15 @@
 import { parseFields } from '../utils/fieldsParser'
 import logResult from '../utils/log'
+import { incrementRequestCounter } from '../utils/requestCounters'
 
 export async function get(ctx: Context, next: () => Promise<unknown>) {
   const {
-    state: { entity: dataEntity, id, entitySettings, client },
+    state: { entity: dataEntity, id, entitySettings, client, operation },
     clients: { masterdata },
+    vtex: {
+      account,
+      route: { id: route },
+    },
   } = ctx
 
   const parsedFields = parseFields(ctx.query._fields)
@@ -24,6 +29,14 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
       ctx,
       result: 'notfound',
       reason: `document not found on entity ${dataEntity}: id ${id}`,
+    })
+
+    incrementRequestCounter({
+      operation,
+      route,
+      entity: dataEntity,
+      account,
+      statusCode: ctx.status,
     })
 
     return
@@ -46,6 +59,14 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
       }`,
     })
 
+    incrementRequestCounter({
+      operation,
+      route,
+      entity: dataEntity,
+      account,
+      statusCode: ctx.status,
+    })
+
     return
   }
 
@@ -60,6 +81,14 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
   ctx.body = document
   ctx.status = 200
   ctx.set('cache-control', 'no-cache')
+
+  incrementRequestCounter({
+    operation,
+    route,
+    entity: dataEntity,
+    account,
+    statusCode: ctx.status,
+  })
 
   await next()
 }

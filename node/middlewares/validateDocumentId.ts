@@ -1,4 +1,5 @@
 import logResult from '../utils/log'
+import { incrementRequestCounter } from '../utils/requestCounters'
 
 export async function validateDocumentId(
   ctx: Context,
@@ -6,18 +7,27 @@ export async function validateDocumentId(
 ) {
   const {
     vtex: {
-      route: { id: routeId },
+      account,
+      route: { id: route },
     },
     state: { id, operation, entitySettings, client, entity: dataEntity },
     clients: { masterdata },
   } = ctx
 
-  if (routeId === 'documentId' && !id) {
+  if (route === 'documentId' && !id) {
     ctx.status = 400
     logResult({
       ctx,
       result: 'invalid',
       reason: 'id is missing in documentId route',
+    })
+
+    incrementRequestCounter({
+      operation,
+      route,
+      entity: dataEntity,
+      account,
+      statusCode: ctx.status,
     })
 
     return
@@ -44,6 +54,14 @@ export async function validateDocumentId(
         } - value ${
           documentToUpdate[entitySettings?.fieldToMatchOnEntity]
         } does not belong to user ${client.email}`,
+      })
+
+      incrementRequestCounter({
+        operation,
+        route,
+        entity: dataEntity,
+        account,
+        statusCode: ctx.status,
       })
 
       return
