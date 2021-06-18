@@ -1,5 +1,4 @@
 import logResult from '../utils/log'
-import { incrementRequestCounter } from '../utils/requestCounters'
 
 export async function validateDocumentOwnership(
   ctx: Context,
@@ -11,6 +10,7 @@ export async function validateDocumentOwnership(
       account,
       route: { id: route },
     },
+    clients: { metrics },
   } = ctx
 
   if (isLoggedIn) {
@@ -32,7 +32,7 @@ export async function validateDocumentOwnership(
         } does not belong to user ${client.email}`,
       })
 
-      incrementRequestCounter({
+      metrics.incrementRequestCounter({
         operation,
         route,
         entity,

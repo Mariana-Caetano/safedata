@@ -1,14 +1,13 @@
 import adConfiguration from '../constants/adConfiguration'
 import clConfiguration from '../constants/clConfiguration'
 import logResult from '../utils/log'
-import { incrementRequestCounter } from '../utils/requestCounters'
 import SettingsCache, {
   DEFAULT_SETTINGS_CACHE_MAX_AGE,
 } from '../utils/settingsCache'
 
 export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
   const {
-    clients: { apps },
+    clients: { apps, metrics },
     state: { entity, operation },
     vtex: {
       account,
@@ -49,7 +48,7 @@ export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
       reason: 'entity settings not configured',
     })
 
-    incrementRequestCounter({
+    metrics.incrementRequestCounter({
       operation,
       route,
       entity,

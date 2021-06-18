@@ -1,5 +1,6 @@
 import clConfiguration from '../constants/clConfiguration'
 import { getClient } from '../middlewares/getClient'
+import { metricsMock } from './base'
 
 function getContext({
   isLoggedIn,
@@ -28,6 +29,7 @@ function getContext({
       masterdata: {
         searchDocuments: () => items,
       },
+      ...metricsMock,
     },
     query: {
       _fields: '',
@@ -59,7 +61,7 @@ describe('getClient', () => {
   it('user exists', async () => {
     const context = getContext({
       isLoggedIn: true,
-      authenticatedUser: { user: 'test' },
+      authenticatedUser: { user: 'test_exists' },
       entity: 'CL',
       entitySettings: clConfiguration,
       items: [{}],

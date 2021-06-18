@@ -1,6 +1,5 @@
 import { parseFields } from '../utils/fieldsParser'
 import logResult from '../utils/log'
-import { incrementRequestCounter } from '../utils/requestCounters'
 
 export async function get(ctx: Context, next: () => Promise<unknown>) {
   const {
@@ -31,7 +30,7 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
       reason: `document not found on entity ${dataEntity}: id ${id}`,
     })
 
-    incrementRequestCounter({
+    ctx.clients.metrics.incrementRequestCounter({
       operation,
       route,
       entity: dataEntity,
@@ -59,7 +58,7 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
       }`,
     })
 
-    incrementRequestCounter({
+    ctx.clients.metrics.incrementRequestCounter({
       operation,
       route,
       entity: dataEntity,
@@ -82,7 +81,7 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
   ctx.status = 200
   ctx.set('cache-control', 'no-cache')
 
-  incrementRequestCounter({
+  ctx.clients.metrics.incrementRequestCounter({
     operation,
     route,
     entity: dataEntity,

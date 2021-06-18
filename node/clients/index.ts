@@ -1,6 +1,7 @@
 import { IOClients } from '@vtex/api'
 import { Checkout } from '@vtex/clients'
 
+import Metrics from './metrics'
 import Profile from './profile'
 import VtexId from './vtexid'
 
@@ -16,5 +17,9 @@ export class Clients extends IOClients {
 
   public get checkoutProfile() {
     return this.getOrSet('checkoutProfile', Profile)
+  }
+
+  public get metrics() {
+    return this.getOrSet('request', Metrics)
   }
 }

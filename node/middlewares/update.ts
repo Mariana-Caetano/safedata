@@ -1,5 +1,3 @@
-import { incrementRequestCounter } from '../utils/requestCounters'
-
 export async function update(ctx: Context, next: () => Promise<unknown>) {
   const {
     vtex: {
@@ -8,7 +6,7 @@ export async function update(ctx: Context, next: () => Promise<unknown>) {
       route: { id: route },
     },
     state: { entity: dataEntity, document, id, operation },
-    clients: { masterdata },
+    clients: { masterdata, metrics },
   } = ctx
 
   try {
@@ -20,7 +18,7 @@ export async function update(ctx: Context, next: () => Promise<unknown>) {
     })
   } catch (error) {
     logger.error(error)
-    incrementRequestCounter({
+    metrics.incrementRequestCounter({
       operation,
       route,
       entity: dataEntity,
@@ -33,7 +31,7 @@ export async function update(ctx: Context, next: () => Promise<unknown>) {
   ctx.body = document
   ctx.status = 200
 
-  incrementRequestCounter({
+  metrics.incrementRequestCounter({
     operation,
     route,
     entity: dataEntity,

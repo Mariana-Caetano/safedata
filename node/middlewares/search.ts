@@ -1,11 +1,10 @@
 import { parseFields } from '../utils/fieldsParser'
 import logResult from '../utils/log'
-import { incrementRequestCounter } from '../utils/requestCounters'
 
 export async function search(ctx: Context, next: () => Promise<unknown>) {
   const {
     state: { entity: dataEntity, client, entitySettings, operation },
-    clients: { masterdata },
+    clients: { masterdata, metrics },
     vtex: {
       account,
       route: { id: route },
@@ -49,7 +48,7 @@ export async function search(ctx: Context, next: () => Promise<unknown>) {
       reason: `documents not found or they don't belong to user ${client?.email}. Entity: ${dataEntity} Query: ${ctx.querystring}`,
     })
 
-    incrementRequestCounter({
+    metrics.incrementRequestCounter({
       operation,
       route,
       entity: dataEntity,
@@ -73,7 +72,7 @@ export async function search(ctx: Context, next: () => Promise<unknown>) {
   ctx.body = validDocuments
   ctx.status = 200
 
-  incrementRequestCounter({
+  metrics.incrementRequestCounter({
     operation,
     route,
     entity: dataEntity,

@@ -7,7 +7,7 @@ describe('getAuthInfo', () => {
     const context: unknown = {
       clients: {
         vtexid: {
-          getAuthenticatedUser: () => undefined,
+          getAuthenticatedUser: () => Promise.resolve(undefined),
         },
       },
       vtex: {
@@ -36,12 +36,12 @@ describe('getAuthInfo', () => {
         vtexid: {
           getAuthenticatedUser: (token: string) => {
             if (token === 'ABC') {
-              return {
+              return Promise.resolve({
                 user: 'testuser@email.com',
-              }
+              })
             }
 
-            return undefined
+            return Promise.resolve(undefined)
           },
         },
       },
@@ -71,12 +71,12 @@ describe('getAuthInfo', () => {
         vtexid: {
           getAuthenticatedUser: (token: string) => {
             if (token === 'ABC') {
-              return {
+              return Promise.resolve({
                 user: 'testuser@email.com',
-              }
+              })
             }
 
-            return undefined
+            return Promise.resolve(undefined)
           },
         },
       },

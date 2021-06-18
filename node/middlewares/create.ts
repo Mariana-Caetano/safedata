@@ -1,5 +1,4 @@
 import logResult from '../utils/log'
-import { incrementRequestCounter } from '../utils/requestCounters'
 
 export async function create(ctx: Context, next: () => Promise<unknown>) {
   const {
@@ -39,7 +38,7 @@ export async function create(ctx: Context, next: () => Promise<unknown>) {
         reason: `can't create this entity without authentication: ${dataEntity}`,
       })
 
-      incrementRequestCounter({
+      ctx.clients.metrics.incrementRequestCounter({
         operation: ctx.state.operation,
         route: ctx.vtex.route.id,
         entity: dataEntity,
@@ -65,7 +64,7 @@ export async function create(ctx: Context, next: () => Promise<unknown>) {
   ctx.body = document
   ctx.status = 200
 
-  incrementRequestCounter({
+  ctx.clients.metrics.incrementRequestCounter({
     operation: ctx.state.operation,
     route: ctx.vtex.route.id,
     entity: dataEntity,
@@ -137,7 +136,7 @@ async function hasInvalidOrderFormData({
       reason: `orderForm email information (${orderForm.clientProfileData?.email}) does not match provided email (${document.email})`,
     })
 
-    incrementRequestCounter({
+    ctx.clients.metrics.incrementRequestCounter({
       operation: ctx.state.operation,
       route: ctx.vtex.route.id,
       entity: dataEntity,
@@ -188,7 +187,7 @@ async function hasInvalidMatchingDocument({
       } already belongs to a user`,
     })
 
-    incrementRequestCounter({
+    ctx.clients.metrics.incrementRequestCounter({
       operation: ctx.state.operation,
       route: ctx.vtex.route.id,
       entity: dataEntity,

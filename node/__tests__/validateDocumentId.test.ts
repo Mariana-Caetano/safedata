@@ -1,5 +1,6 @@
 import adConfiguration from '../constants/adConfiguration'
 import { validateDocumentId } from '../middlewares/validateDocumentId'
+import { metricsMock } from './base'
 
 function getContext({
   routeId,
@@ -28,6 +29,7 @@ function getContext({
       masterdata: {
         getDocument: () => document,
       },
+      ...metricsMock,
     },
   }
 }

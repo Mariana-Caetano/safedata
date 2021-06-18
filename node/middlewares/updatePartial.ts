@@ -1,5 +1,3 @@
-import { incrementRequestCounter } from '../utils/requestCounters'
-
 export async function updatePartial(
   ctx: Context,
   next: () => Promise<unknown>
@@ -11,7 +9,7 @@ export async function updatePartial(
       route: { id: route },
     },
     state: { entity: dataEntity, document, id, operation },
-    clients: { masterdata },
+    clients: { masterdata, metrics },
   } = ctx
 
   try {
@@ -23,7 +21,7 @@ export async function updatePartial(
     })
   } catch (error) {
     logger.error(error)
-    incrementRequestCounter({
+    metrics.incrementRequestCounter({
       operation,
       route,
       entity: dataEntity,
@@ -36,7 +34,7 @@ export async function updatePartial(
   ctx.body = document
   ctx.status = 200
 
-  incrementRequestCounter({
+  metrics.incrementRequestCounter({
     operation,
     route,
     entity: dataEntity,

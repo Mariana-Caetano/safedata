@@ -28,7 +28,7 @@ export async function getClient(ctx: Context, next: () => Promise<unknown>) {
       ).then((res) => {
         return {
           maxAge: DEFAULT_CLIENT_CACHE_MAX_AGE,
-          value: res ?? {},
+          value: res,
         }
       })
     )

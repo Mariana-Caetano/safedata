@@ -1,5 +1,4 @@
 import logResult from '../utils/log'
-import { incrementRequestCounter } from '../utils/requestCounters'
 
 export async function validateDocumentId(
   ctx: Context,
@@ -11,7 +10,7 @@ export async function validateDocumentId(
       route: { id: route },
     },
     state: { id, operation, entitySettings, client, entity: dataEntity },
-    clients: { masterdata },
+    clients: { masterdata, metrics },
   } = ctx
 
   if (route === 'documentId' && !id) {
@@ -22,7 +21,7 @@ export async function validateDocumentId(
       reason: 'id is missing in documentId route',
     })
 
-    incrementRequestCounter({
+    metrics.incrementRequestCounter({
       operation,
       route,
       entity: dataEntity,
@@ -56,7 +55,7 @@ export async function validateDocumentId(
         } does not belong to user ${client.email}`,
       })
 
-      incrementRequestCounter({
+      metrics.incrementRequestCounter({
         operation,
         route,
         entity: dataEntity,

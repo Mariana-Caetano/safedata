@@ -1,5 +1,4 @@
 import logResult from '../utils/log'
-import { incrementRequestCounter } from '../utils/requestCounters'
 
 export async function validateLogin(
   ctx: Context,
@@ -11,6 +10,7 @@ export async function validateLogin(
       account,
       route: { id: route },
     },
+    clients: { metrics },
   } = ctx
 
   if (
@@ -21,7 +21,7 @@ export async function validateLogin(
     ctx.status = 401
     logResult({ ctx, result: 'unauthorized', reason: 'user is not logged in' })
 
-    incrementRequestCounter({
+    metrics.incrementRequestCounter({
       operation,
       route,
       entity,
