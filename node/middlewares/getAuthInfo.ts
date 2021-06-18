@@ -1,5 +1,3 @@
-import UserCache, { DEFAULT_USER_CACHE_MAX_AGE } from '../utils/userCache'
-
 export async function getAuthInfo(ctx: Context, next: () => Promise<unknown>) {
   const {
     clients: { vtexid },
@@ -16,14 +14,7 @@ export async function getAuthInfo(ctx: Context, next: () => Promise<unknown>) {
   let authenticatedUser: AuthenticatedUser | undefined
 
   if (storeUserAuthToken) {
-    authenticatedUser = (await UserCache.getOrSet(storeUserAuthToken, () =>
-      vtexid.getAuthenticatedUser(storeUserAuthToken).then((res) => {
-        return {
-          value: res,
-          maxAge: DEFAULT_USER_CACHE_MAX_AGE,
-        }
-      })
-    )) as AuthenticatedUser
+    authenticatedUser = await vtexid.getAuthenticatedUser(storeUserAuthToken)
   }
 
   ctx.state.entity = entity
