@@ -1,4 +1,4 @@
-import logResult from '../utils/log'
+import { setContextResult } from '../utils/setContextResult'
 
 export async function validateDocumentId(
   ctx: Context,
@@ -6,27 +6,21 @@ export async function validateDocumentId(
 ) {
   const {
     vtex: {
-      account,
       route: { id: route },
     },
     state: { id, operation, entitySettings, client, entity: dataEntity },
-    clients: { masterdata, metrics },
+    clients: { masterdata },
   } = ctx
 
   if (route === 'documentId' && !id) {
-    ctx.status = 400
-    logResult({
+    setContextResult({
       ctx,
-      result: 'invalid',
-      reason: 'id is missing in documentId route',
-    })
-
-    metrics.incrementRequestCounter({
-      operation,
-      route,
-      entity: dataEntity,
-      account,
-      statusCode: ctx.status,
+      statusCode: 400,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'invalid',
+        logReason: `id is missing in documentId route - ${ctx.url}`,
+      },
     })
 
     return
@@ -44,23 +38,18 @@ export async function validateDocumentId(
       documentToUpdate[entitySettings.fieldToMatchOnEntity] !==
         client[entitySettings.fieldToMatchOnClient]
     ) {
-      ctx.status = 403
-      logResult({
+      setContextResult({
         ctx,
-        result: 'forbidden',
-        reason: `document has invalid matching field ${
-          entitySettings?.fieldToMatchOnEntity
-        } - value ${
-          documentToUpdate[entitySettings?.fieldToMatchOnEntity]
-        } does not belong to user ${client.email}`,
-      })
-
-      metrics.incrementRequestCounter({
-        operation,
-        route,
-        entity: dataEntity,
-        account,
-        statusCode: ctx.status,
+        statusCode: 403,
+        logInfo: {
+          needsLogging: true,
+          logResult: 'forbidden',
+          logReason: `document has invalid matching field ${
+            entitySettings?.fieldToMatchOnEntity
+          } - value ${
+            documentToUpdate[entitySettings?.fieldToMatchOnEntity]
+          } does not belong to user ${client.email}`,
+        },
       })
 
       return

@@ -1,14 +1,10 @@
 import { parseFields } from '../utils/fieldsParser'
-import logResult from '../utils/log'
+import { setContextResult } from '../utils/setContextResult'
 
 export async function search(ctx: Context, next: () => Promise<unknown>) {
   const {
-    state: { entity: dataEntity, client, entitySettings, operation },
-    clients: { masterdata, metrics },
-    vtex: {
-      account,
-      route: { id: route },
-    },
+    state: { entity: dataEntity, client, entitySettings },
+    clients: { masterdata },
   } = ctx
 
   const parsedFields = parseFields(ctx.query._fields)
@@ -41,19 +37,14 @@ export async function search(ctx: Context, next: () => Promise<unknown>) {
   )
 
   if (validDocuments.length === 0) {
-    ctx.status = 404
-    logResult({
+    setContextResult({
       ctx,
-      result: 'notfound',
-      reason: `documents not found or they don't belong to user ${client?.email}. Entity: ${dataEntity} Query: ${ctx.querystring}`,
-    })
-
-    metrics.incrementRequestCounter({
-      operation,
-      route,
-      entity: dataEntity,
-      account,
-      statusCode: ctx.status,
+      statusCode: 404,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'notfound',
+        logReason: `documents not found or they don't belong to user ${client?.email}. Entity: ${dataEntity} Query: ${ctx.querystring}`,
+      },
     })
 
     return
@@ -70,17 +61,15 @@ export async function search(ctx: Context, next: () => Promise<unknown>) {
   }
 
   ctx.body = validDocuments
-  ctx.status = 200
-
-  metrics.incrementRequestCounter({
-    operation,
-    route,
-    entity: dataEntity,
-    account,
-    statusCode: ctx.status,
-  })
-
   ctx.set('cache-control', 'no-cache')
+
+  setContextResult({
+    ctx,
+    statusCode: 200,
+    logInfo: {
+      needsLogging: false,
+    },
+  })
 
   await next()
 }

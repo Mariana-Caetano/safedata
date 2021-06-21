@@ -1,4 +1,4 @@
-import logResult from '../utils/log'
+import { setContextResult } from '../utils/setContextResult'
 
 export async function create(ctx: Context, next: () => Promise<unknown>) {
   const {
@@ -31,19 +31,14 @@ export async function create(ctx: Context, next: () => Promise<unknown>) {
         return
       }
     } else {
-      ctx.status = 401
-      logResult({
+      setContextResult({
         ctx,
-        result: 'unauthorized',
-        reason: `can't create this entity without authentication: ${dataEntity}`,
-      })
-
-      ctx.clients.metrics.incrementRequestCounter({
-        operation: ctx.state.operation,
-        route: ctx.vtex.route.id,
-        entity: dataEntity,
-        account: ctx.vtex.account,
-        statusCode: ctx.status,
+        statusCode: 401,
+        logInfo: {
+          needsLogging: true,
+          logResult: 'unauthorized',
+          logReason: `can't create this entity without authentication: ${dataEntity}`,
+        },
       })
 
       return
@@ -62,14 +57,13 @@ export async function create(ctx: Context, next: () => Promise<unknown>) {
   await createOrUpdateDocument(ctx, dataEntity, document)
 
   ctx.body = document
-  ctx.status = 200
 
-  ctx.clients.metrics.incrementRequestCounter({
-    operation: ctx.state.operation,
-    route: ctx.vtex.route.id,
-    entity: dataEntity,
-    account: ctx.vtex.account,
-    statusCode: ctx.status,
+  setContextResult({
+    ctx,
+    statusCode: 200,
+    logInfo: {
+      needsLogging: false,
+    },
   })
 
   await next()
@@ -129,19 +123,14 @@ async function hasInvalidOrderFormData({
     publicProfile.isComplete ||
     orderForm.clientProfileData?.email !== document.email
   ) {
-    ctx.status = 403
-    logResult({
+    setContextResult({
       ctx,
-      result: 'forbidden',
-      reason: `orderForm email information (${orderForm.clientProfileData?.email}) does not match provided email (${document.email})`,
-    })
-
-    ctx.clients.metrics.incrementRequestCounter({
-      operation: ctx.state.operation,
-      route: ctx.vtex.route.id,
-      entity: dataEntity,
-      account: ctx.vtex.account,
-      statusCode: ctx.status,
+      statusCode: 403,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'forbidden',
+        logReason: `orderForm email information (${orderForm.clientProfileData?.email}) does not match provided email (${document.email})`,
+      },
     })
 
     return true
@@ -176,23 +165,18 @@ async function hasInvalidMatchingDocument({
   )
 
   if (matchingDocuments.length > 0) {
-    ctx.status = 403
-    logResult({
+    setContextResult({
       ctx,
-      result: 'forbidden',
-      reason: `document to be created has invalid matching field ${
-        entitySettings?.fieldToMatchOnEntity
-      } - value ${
-        document[entitySettings?.fieldToMatchOnEntity]
-      } already belongs to a user`,
-    })
-
-    ctx.clients.metrics.incrementRequestCounter({
-      operation: ctx.state.operation,
-      route: ctx.vtex.route.id,
-      entity: dataEntity,
-      account: ctx.vtex.account,
-      statusCode: ctx.status,
+      statusCode: 403,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'forbidden',
+        logReason: `document to be created has invalid matching field ${
+          entitySettings?.fieldToMatchOnEntity
+        } - value ${
+          document[entitySettings?.fieldToMatchOnEntity]
+        } already belongs to a user`,
+      },
     })
 
     return true

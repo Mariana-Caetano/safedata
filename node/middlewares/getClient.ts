@@ -1,4 +1,7 @@
-import { ClientCache, DEFAULT_CLIENT_CACHE_MAX_AGE_IN_MS } from '../utils/clientCache'
+import {
+  ClientCache,
+  DEFAULT_CLIENT_CACHE_MAX_AGE_IN_MS,
+} from '../utils/clientCache'
 import { parseFields } from '../utils/fieldsParser'
 import getCL from '../utils/getCL'
 
@@ -16,7 +19,12 @@ export async function getClient(ctx: Context, next: () => Promise<unknown>) {
   const parsedFields = parseFields(ctx.query._fields)
 
   if (isLoggedIn) {
-    const cacheKey = `${ctx.vtex.account}-${ctx.vtex.workspace}-${process.env.VTEX_APP_ID}-user-${authenticatedUser?.user}-${ctx.query._fields}`
+    const fieldsKey =
+      dataEntity === 'CL'
+        ? `${ctx.query._fields},${entitySettings.fieldToMatchOnClient}`
+        : entitySettings.fieldToMatchOnClient
+
+    const cacheKey = `${ctx.vtex.account}-${ctx.vtex.workspace}-${process.env.VTEX_APP_ID}-user-${authenticatedUser?.user}-${fieldsKey}`
 
     const client = await ClientCache.getOrSet(cacheKey, async () =>
       getCL(

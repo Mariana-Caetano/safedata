@@ -1,14 +1,10 @@
 import { parseFields } from '../utils/fieldsParser'
-import logResult from '../utils/log'
+import { setContextResult } from '../utils/setContextResult'
 
 export async function get(ctx: Context, next: () => Promise<unknown>) {
   const {
-    state: { entity: dataEntity, id, entitySettings, client, operation },
+    state: { entity: dataEntity, id, entitySettings, client },
     clients: { masterdata },
-    vtex: {
-      account,
-      route: { id: route },
-    },
   } = ctx
 
   const parsedFields = parseFields(ctx.query._fields)
@@ -23,19 +19,14 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
         })) as MasterDataEntity)
 
   if (!document) {
-    ctx.status = 404
-    logResult({
+    setContextResult({
       ctx,
-      result: 'notfound',
-      reason: `document not found on entity ${dataEntity}: id ${id}`,
-    })
-
-    ctx.clients.metrics.incrementRequestCounter({
-      operation,
-      route,
-      entity: dataEntity,
-      account,
-      statusCode: ctx.status,
+      statusCode: 404,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'notfound',
+        logReason: `document not found on entity ${dataEntity}: id ${id}`,
+      },
     })
 
     return
@@ -47,23 +38,18 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
     document[entitySettings?.fieldToMatchOnEntity] !==
       client[entitySettings?.fieldToMatchOnClient]
   ) {
-    ctx.status = 403
-    logResult({
+    setContextResult({
       ctx,
-      result: 'forbidden',
-      reason: `document with matched field ${
-        document[entitySettings?.fieldToMatchOnEntity]
-      } does not belong to user ${
-        client[entitySettings?.fieldToMatchOnClient]
-      }`,
-    })
-
-    ctx.clients.metrics.incrementRequestCounter({
-      operation,
-      route,
-      entity: dataEntity,
-      account,
-      statusCode: ctx.status,
+      statusCode: 403,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'forbidden',
+        logReason: `document with matched field ${
+          document[entitySettings?.fieldToMatchOnEntity]
+        } does not belong to user ${
+          client[entitySettings?.fieldToMatchOnClient]
+        }`,
+      },
     })
 
     return
@@ -78,15 +64,14 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
   }
 
   ctx.body = document
-  ctx.status = 200
   ctx.set('cache-control', 'no-cache')
 
-  ctx.clients.metrics.incrementRequestCounter({
-    operation,
-    route,
-    entity: dataEntity,
-    account,
-    statusCode: ctx.status,
+  setContextResult({
+    ctx,
+    statusCode: 200,
+    logInfo: {
+      needsLogging: false,
+    },
   })
 
   await next()

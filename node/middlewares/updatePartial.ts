@@ -1,15 +1,12 @@
+import { setContextResult } from '../utils/setContextResult'
+
 export async function updatePartial(
   ctx: Context,
   next: () => Promise<unknown>
 ) {
   const {
-    vtex: {
-      logger,
-      account,
-      route: { id: route },
-    },
-    state: { entity: dataEntity, document, id, operation },
-    clients: { masterdata, metrics },
+    state: { entity: dataEntity, document, id },
+    clients: { masterdata },
   } = ctx
 
   try {
@@ -20,26 +17,25 @@ export async function updatePartial(
       schema: ctx.query._schema,
     })
   } catch (error) {
-    logger.error(error)
-    metrics.incrementRequestCounter({
-      operation,
-      route,
-      entity: dataEntity,
-      account,
+    setContextResult({
+      ctx,
       statusCode: 500,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'invalid',
+        logReason: error,
+      },
     })
     throw error
   }
 
   ctx.body = document
-  ctx.status = 200
-
-  metrics.incrementRequestCounter({
-    operation,
-    route,
-    entity: dataEntity,
-    account,
-    statusCode: ctx.status,
+  setContextResult({
+    ctx,
+    statusCode: 200,
+    logInfo: {
+      needsLogging: false,
+    },
   })
 
   await next()
