@@ -1,7 +1,7 @@
 import type { InstanceOptions, IOContext } from '@vtex/api'
 import { ExternalClient } from '@vtex/api'
 
-import UserCache, { DEFAULT_USER_CACHE_MAX_AGE } from '../utils/userCache'
+import UserCache, { DEFAULT_USER_CACHE_MAX_AGE_IN_MS } from '../utils/userCache'
 
 export default class VtexId extends ExternalClient {
   constructor(context: IOContext, options?: InstanceOptions) {
@@ -20,7 +20,7 @@ export default class VtexId extends ExternalClient {
         .then((res) => {
           return {
             value: res,
-            maxAge: DEFAULT_USER_CACHE_MAX_AGE,
+            maxAge: DEFAULT_USER_CACHE_MAX_AGE_IN_MS,
           }
         })
     ) as Promise<AuthenticatedUser>

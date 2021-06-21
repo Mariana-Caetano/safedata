@@ -1,4 +1,4 @@
-import { ClientCache, DEFAULT_CLIENT_CACHE_MAX_AGE } from '../utils/clientCache'
+import { ClientCache, DEFAULT_CLIENT_CACHE_MAX_AGE_IN_MS } from '../utils/clientCache'
 import { parseFields } from '../utils/fieldsParser'
 import getCL from '../utils/getCL'
 
@@ -27,7 +27,7 @@ export async function getClient(ctx: Context, next: () => Promise<unknown>) {
           : [entitySettings.fieldToMatchOnClient]
       ).then((res) => {
         return {
-          maxAge: DEFAULT_CLIENT_CACHE_MAX_AGE,
+          maxAge: DEFAULT_CLIENT_CACHE_MAX_AGE_IN_MS,
           value: res,
         }
       })

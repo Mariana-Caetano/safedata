@@ -1,6 +1,8 @@
 import { LRUCache } from '@vtex/api'
 
-export const DEFAULT_USER_CACHE_MAX_AGE = 60 * 1000 * 5
+import { FIVE_MINUTES_IN_MS } from './timeConstants'
+
+export const DEFAULT_USER_CACHE_MAX_AGE_IN_MS = FIVE_MINUTES_IN_MS
 export const UserCache = new LRUCache<string, AuthenticatedUser>({
   max: 5000,
 })

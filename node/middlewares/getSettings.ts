@@ -2,7 +2,7 @@ import adConfiguration from '../constants/adConfiguration'
 import clConfiguration from '../constants/clConfiguration'
 import logResult from '../utils/log'
 import SettingsCache, {
-  DEFAULT_SETTINGS_CACHE_MAX_AGE,
+  DEFAULT_SETTINGS_CACHE_MAX_AGE_IN_MS,
 } from '../utils/settingsCache'
 
 export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
@@ -21,7 +21,7 @@ export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
     apps.getAppSettings(process.env.VTEX_APP_ID as string).then((res) => {
       return {
         value: res,
-        maxAge: DEFAULT_SETTINGS_CACHE_MAX_AGE,
+        maxAge: DEFAULT_SETTINGS_CACHE_MAX_AGE_IN_MS,
       }
     })
   )) as Settings
