@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Making some adjustments in the docs so the syntax for non-IO stores is clear
+
 ## [0.4.0] - 2021-07-13
 ### Added
 - Added caching strategies for settings/client entity/auth info
