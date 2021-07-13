@@ -31,7 +31,7 @@ You can use it directly like this:
 
 #####For Non-IO Stores:
 
-If you're implementing SafeData in a store which doesn't use Store Framework, you need to add a prefix `api/io` to the request, like this:
+If you're implementing SafeData in a store which doesn't use Store Framework, you need to insert the path `api/io` to your endpoint before `safedata`, like this:
 `GET https://myaccount.myvtex.com/api/io/safedata/AD/search?_where=addressName=12345`
 
 ## Supported Routes
