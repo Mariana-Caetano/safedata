@@ -15,6 +15,8 @@ import { validateDocumentOwnership } from './middlewares/validateDocumentOwnersh
 import { update } from './middlewares/update'
 import { updatePartial } from './middlewares/updatePartial'
 import { getClient } from './middlewares/getClient'
+import SettingsCache from './utils/settingsCache'
+import ClientCache from './utils/clientCache'
 
 const TIMEOUT_MS = 800
 
@@ -23,6 +25,8 @@ const TIMEOUT_MS = 800
 const memoryCache = new LRUCache<string, never>({ max: 5000 })
 
 metrics.trackCache('status', memoryCache)
+metrics.trackCache('settings', SettingsCache)
+metrics.trackCache('CL', ClientCache)
 
 // This is the configuration for clients available in `ctx.clients`.
 const clients: ClientsConfig<Clients> = {
@@ -58,7 +62,7 @@ declare global {
   }
 }
 
-const getInformation = [getAuthInfo, getSettings, getOperation, getClient]
+const getInformation = [getAuthInfo, getOperation, getSettings, getClient]
 const getAndValidateDocument = [getDocument, validateDocumentOwnership]
 
 // Export a service that defines route handlers and client options.

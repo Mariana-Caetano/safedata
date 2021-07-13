@@ -1,14 +1,18 @@
 import adConfiguration from '../constants/adConfiguration'
 import clConfiguration from '../constants/clConfiguration'
 import { getSettings } from '../middlewares/getSettings'
+import { metricsMock } from './base'
 
 function getContext(entity: string, settings: Settings): unknown {
   return {
     vtex: {
       logger: { info: () => {} },
+      route: { id: 'default' },
+      account: Math.random().toString(36).substring(7),
     },
     clients: {
-      apps: { getAppSettings: () => settings },
+      apps: { getAppSettings: () => Promise.resolve(settings) },
+      ...metricsMock,
     },
     state: {
       entity,

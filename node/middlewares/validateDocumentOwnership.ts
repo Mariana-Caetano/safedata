@@ -1,4 +1,4 @@
-import logResult from '../utils/log'
+import { setContextResult } from '../utils/setContextResult'
 
 export async function validateDocumentOwnership(
   ctx: Context,
@@ -16,15 +16,18 @@ export async function validateDocumentOwnership(
         client[entitySettings?.fieldToMatchOnClient] &&
       (operation === 'update' || operation === 'create')
     ) {
-      ctx.status = 403
-      logResult({
+      setContextResult({
         ctx,
-        result: 'forbidden',
-        reason: `document has invalid matching field ${
-          entitySettings?.fieldToMatchOnEntity
-        } - value ${
-          document[entitySettings?.fieldToMatchOnEntity]
-        } does not belong to user ${client.email}`,
+        statusCode: 403,
+        logInfo: {
+          needsLogging: true,
+          logResult: 'forbidden',
+          logReason: `document has invalid matching field ${
+            entitySettings?.fieldToMatchOnEntity
+          } - value ${
+            document[entitySettings?.fieldToMatchOnEntity]
+          } does not belong to user ${client.email}`,
+        },
       })
 
       return

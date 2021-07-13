@@ -1,4 +1,4 @@
-import logResult from '../utils/log'
+import { setContextResult } from '../utils/setContextResult'
 
 export async function validateDocumentId(
   ctx: Context,
@@ -6,18 +6,21 @@ export async function validateDocumentId(
 ) {
   const {
     vtex: {
-      route: { id: routeId },
+      route: { id: route },
     },
     state: { id, operation, entitySettings, client, entity: dataEntity },
     clients: { masterdata },
   } = ctx
 
-  if (routeId === 'documentId' && !id) {
-    ctx.status = 400
-    logResult({
+  if (route === 'documentId' && !id) {
+    setContextResult({
       ctx,
-      result: 'invalid',
-      reason: 'id is missing in documentId route',
+      statusCode: 400,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'invalid',
+        logReason: `id is missing in documentId route - ${ctx.url}`,
+      },
     })
 
     return
@@ -35,15 +38,18 @@ export async function validateDocumentId(
       documentToUpdate[entitySettings.fieldToMatchOnEntity] !==
         client[entitySettings.fieldToMatchOnClient]
     ) {
-      ctx.status = 403
-      logResult({
+      setContextResult({
         ctx,
-        result: 'forbidden',
-        reason: `document has invalid matching field ${
-          entitySettings?.fieldToMatchOnEntity
-        } - value ${
-          documentToUpdate[entitySettings?.fieldToMatchOnEntity]
-        } does not belong to user ${client.email}`,
+        statusCode: 403,
+        logInfo: {
+          needsLogging: true,
+          logResult: 'forbidden',
+          logReason: `document has invalid matching field ${
+            entitySettings?.fieldToMatchOnEntity
+          } - value ${
+            documentToUpdate[entitySettings?.fieldToMatchOnEntity]
+          } does not belong to user ${client.email}`,
+        },
       })
 
       return

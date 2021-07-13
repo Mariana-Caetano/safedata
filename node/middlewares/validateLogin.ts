@@ -1,4 +1,4 @@
-import logResult from '../utils/log'
+import { setContextResult } from '../utils/setContextResult'
 
 export async function validateLogin(
   ctx: Context,
@@ -13,8 +13,15 @@ export async function validateLogin(
     (operation !== 'create' ||
       (operation === 'create' && !entitySettings.canCreate))
   ) {
-    ctx.status = 401
-    logResult({ ctx, result: 'unauthorized', reason: 'user is not logged in' })
+    setContextResult({
+      ctx,
+      statusCode: 401,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'unauthorized',
+        logReason: `user is not logged in`,
+      },
+    })
 
     return
   }

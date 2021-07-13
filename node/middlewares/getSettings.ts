@@ -1,6 +1,9 @@
 import adConfiguration from '../constants/adConfiguration'
 import clConfiguration from '../constants/clConfiguration'
-import logResult from '../utils/log'
+import { setContextResult } from '../utils/setContextResult'
+import SettingsCache, {
+  DEFAULT_SETTINGS_CACHE_MAX_AGE_IN_MS,
+} from '../utils/settingsCache'
 
 export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
   const {
@@ -8,8 +11,15 @@ export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
     state: { entity },
   } = ctx
 
-  const appSettings = (await apps.getAppSettings(
-    process.env.VTEX_APP_ID as string
+  const cacheKey = `${ctx.vtex.account}-${ctx.vtex.workspace}-${process.env.VTEX_APP_ID}`
+
+  const appSettings = (await SettingsCache.getOrSet(cacheKey, () =>
+    apps.getAppSettings(process.env.VTEX_APP_ID as string).then((res) => {
+      return {
+        value: res,
+        maxAge: DEFAULT_SETTINGS_CACHE_MAX_AGE_IN_MS,
+      }
+    })
   )) as Settings
 
   let entitySettings =
@@ -27,11 +37,14 @@ export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
   }
 
   if (!entitySettings) {
-    ctx.status = 403
-    logResult({
+    setContextResult({
       ctx,
-      result: 'forbidden',
-      reason: 'entity settings not configured',
+      statusCode: 403,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'forbidden',
+        logReason: `entity settings for entity ${entity} not configured`,
+      },
     })
 
     return

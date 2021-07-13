@@ -1,4 +1,4 @@
-export default function logResult({
+export default function log({
   ctx,
   result,
   reason,

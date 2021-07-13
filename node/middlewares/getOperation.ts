@@ -1,4 +1,4 @@
-import logResult from '../utils/log'
+import log from '../utils/log'
 
 export async function getOperation(ctx: Context, next: () => Promise<unknown>) {
   const {
@@ -19,7 +19,7 @@ export async function getOperation(ctx: Context, next: () => Promise<unknown>) {
   } else if (id === 'documentId' && method === 'DELETE') {
     ctx.state.operation = 'delete'
   } else {
-    logResult({
+    log({
       ctx,
       result: 'forbidden',
       reason: `invalid operation (route: ${id}, method: ${method}) `,

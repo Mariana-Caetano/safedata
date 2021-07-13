@@ -1,5 +1,5 @@
 import { parseFields } from '../utils/fieldsParser'
-import logResult from '../utils/log'
+import { setContextResult } from '../utils/setContextResult'
 
 export async function search(ctx: Context, next: () => Promise<unknown>) {
   const {
@@ -37,11 +37,14 @@ export async function search(ctx: Context, next: () => Promise<unknown>) {
   )
 
   if (validDocuments.length === 0) {
-    ctx.status = 404
-    logResult({
+    setContextResult({
       ctx,
-      result: 'notfound',
-      reason: `documents not found or they don't belong to user ${client?.email}. Entity: ${dataEntity} Query: ${ctx.querystring}`,
+      statusCode: 404,
+      logInfo: {
+        needsLogging: true,
+        logResult: 'notfound',
+        logReason: `documents not found or they don't belong to user ${client?.email}. Entity: ${dataEntity} Query: ${ctx.querystring}`,
+      },
     })
 
     return
@@ -58,8 +61,15 @@ export async function search(ctx: Context, next: () => Promise<unknown>) {
   }
 
   ctx.body = validDocuments
-  ctx.status = 200
   ctx.set('cache-control', 'no-cache')
+
+  setContextResult({
+    ctx,
+    statusCode: 200,
+    logInfo: {
+      needsLogging: false,
+    },
+  })
 
   await next()
 }
