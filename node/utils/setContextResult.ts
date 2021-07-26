@@ -1,4 +1,5 @@
 import log from './log'
+import type { OperationResult } from '../typings/operationResult'
 
 export const setContextResult = ({
   ctx,
@@ -9,10 +10,12 @@ export const setContextResult = ({
   statusCode: number
   logInfo: {
     needsLogging: boolean
-    logResult?: 'unauthorized' | 'forbidden' | 'notfound' | 'invalid' | 'ok'
+    logResult?: OperationResult
     logReason?: string
   }
 }) => {
+  ctx.state.result =
+    logResult ?? (statusCode >= 200 && statusCode < 300 ? 'ok' : 'invalid')
   ctx.status = statusCode
   if (needsLogging && logResult) {
     log({

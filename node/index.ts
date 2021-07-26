@@ -59,6 +59,7 @@ declare global {
     authenticatedUser: AuthenticatedUser | undefined
     document: MasterDataEntity
     client: MasterDataEntity
+    result: OperationResult
   }
 }
 
