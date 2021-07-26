@@ -1,0 +1,11 @@
+type Mutation {
+  patchDocument(
+    entity: String!
+    document: DocumentInput
+    schema: String
+  ): DocumentResponse @cacheControl(scope: PRIVATE)
+}
+
+type Query { 
+  DoNotCall: Boolean
+}
