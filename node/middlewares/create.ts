@@ -1,3 +1,6 @@
+import camelCase from 'camelcase'
+import transformObjKeys from 'transform-obj-keys'
+
 import { setContextResult } from '../utils/setContextResult'
 
 export async function create(ctx: Context, next: () => Promise<unknown>) {
@@ -54,9 +57,10 @@ export async function create(ctx: Context, next: () => Promise<unknown>) {
     return
   }
 
-  await createOrUpdateDocument(ctx, dataEntity, document)
+  const documentResult = await createOrUpdateDocument(ctx, dataEntity, document)
 
-  ctx.body = document
+  // transforms documentResult to camelCase since the MasterData API returns all data in PascalCase
+  ctx.body = transformObjKeys({ ...document, ...documentResult }, camelCase)
 
   setContextResult({
     ctx,
@@ -75,7 +79,7 @@ async function createOrUpdateDocument(
   document: MasterDataEntity
 ) {
   try {
-    await ctx.clients.masterdata.createOrUpdatePartialDocument({
+    return await ctx.clients.masterdata.createOrUpdatePartialDocument({
       dataEntity,
       fields: document,
       schema: ctx.query._schema,
@@ -86,6 +90,8 @@ async function createOrUpdateDocument(
       ctx.vtex.logger.error(error)
       throw error
     }
+
+    return null
   }
 }
 
