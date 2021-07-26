@@ -24,12 +24,12 @@ SafeData respects the same MasterData routes which can be accessed by replacing 
 
 Let's say we need to query the address `AD` entity by the addressName (`addressName=12345`):
 
-#####For IO Stores:
+##### For IO Stores:
 You can use it directly like this:
 
 `GET https://myaccount.myvtex.com/safedata/AD/search?_where=addressName=12345`
 
-#####For Non-IO Stores:
+##### For Non-IO Stores:
 
 If you're implementing SafeData in a store which doesn't use Store Framework, you need to insert the path `api/io` to your endpoint before `safedata`, like this:
 `GET https://myaccount.myvtex.com/api/io/safedata/AD/search?_where=addressName=12345`
@@ -57,6 +57,18 @@ Partial document update:
 `PATCH /safedata/{entity}/documents/{documentId}`
 
 All underscore query parameters are supported (_where, _fields, _schema and so on)
+
+## GraphQL interface
+
+SafeData also provides a `patchDocument` mutation in GraphQL which enables react components (IO) to create/update documents in MasterData. 
+
+The schema is as follows:
+
+![GraphQL](https://user-images.githubusercontent.com/1629129/127065235-fcf682d2-4b15-42d2-8d9b-b7b2df7d1d81.png)
+
+`fields` is a Key/Value pair for each MD field.
+
+This is still a work-in-progress, so for now only the `PATCH` functionality is available.
 
 ## Working with custom checkout fields
 
