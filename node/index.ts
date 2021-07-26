@@ -17,6 +17,8 @@ import { updatePartial } from './middlewares/updatePartial'
 import { getClient } from './middlewares/getClient'
 import SettingsCache from './utils/settingsCache'
 import ClientCache from './utils/clientCache'
+import { patchDocument } from './resolvers/patchDocument'
+import type { OperationResult } from './typings/operationResult'
 
 const TIMEOUT_MS = 800
 
@@ -69,6 +71,13 @@ const getAndValidateDocument = [getDocument, validateDocumentOwnership]
 // Export a service that defines route handlers and client options.
 export default new Service({
   clients,
+  graphql: {
+    resolvers: {
+      Mutation: {
+        patchDocument,
+      },
+    },
+  },
   routes: {
     documents: method({
       POST: [
