@@ -1,4 +1,5 @@
 import { parseFields } from '../utils/fieldsParser'
+import { StatusCodes } from '../utils/httpUtils'
 import { setContextResult } from '../utils/setContextResult'
 
 export async function get(ctx: Context, next: () => Promise<unknown>) {
@@ -21,7 +22,7 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
   if (!document) {
     setContextResult({
       ctx,
-      statusCode: 404,
+      statusCode: StatusCodes.NOT_FOUND,
       logInfo: {
         needsLogging: true,
         logResult: 'notfound',
@@ -40,7 +41,7 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
   ) {
     setContextResult({
       ctx,
-      statusCode: 403,
+      statusCode: StatusCodes.FORBIDDEN,
       logInfo: {
         needsLogging: true,
         logResult: 'forbidden',
@@ -68,7 +69,7 @@ export async function get(ctx: Context, next: () => Promise<unknown>) {
 
   setContextResult({
     ctx,
-    statusCode: 200,
+    statusCode: StatusCodes.OK,
     logInfo: {
       needsLogging: false,
     },

@@ -1,3 +1,4 @@
+import { StatusCodes } from '../utils/httpUtils'
 import { setContextResult } from '../utils/setContextResult'
 
 export async function updatePartial(
@@ -19,7 +20,7 @@ export async function updatePartial(
   } catch (error) {
     setContextResult({
       ctx,
-      statusCode: 500,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       logInfo: {
         needsLogging: true,
         logResult: 'invalid',
@@ -32,7 +33,7 @@ export async function updatePartial(
   ctx.body = document
   setContextResult({
     ctx,
-    statusCode: 200,
+    statusCode: StatusCodes.OK,
     logInfo: {
       needsLogging: false,
     },
