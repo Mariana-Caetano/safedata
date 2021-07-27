@@ -45,7 +45,7 @@ export async function patchDocument(
   ) => {
     await fn(graphqlContext, followNext)
 
-    return follow === true
+    return follow
   }
 
   const middlewares = [
