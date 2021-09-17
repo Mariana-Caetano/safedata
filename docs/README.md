@@ -2,9 +2,9 @@
 
 # Querying personal MasterData Information with SafeData
 
-The SafeData app provides an easy to use, configurable middleware to retrieve and save MasterData (V1 & V2) information directly on the front-end (or through another back-end as well).
+The SafeData app provides an easy to use, configurable middleware to retrieve and save MasterData (V1 & V2) information directly on the front-end, or through another back-end.
 
-It works by acting as an validation/authorization layer on top of masterdata api to ensure the data being queried/changed belongs to the user executing the action.
+It works by acting as an validation layer on top of MasterData API to ensure the data being queried belongs to the user executing the action.
 
 ## Getting Started
 
@@ -14,7 +14,7 @@ You can install it through the app store or the command-line interface:
 vtex install vtex.safedata@0.x
 ```
 
-The base configurations for CL (Client) and AD (Address) entities are automatically configured but can be changed by using the app settings interface (this is currently a work-in-progress)
+The base configurations for CL (Client) and AD (Address) entities are automatically configured but can be changed by using the app settings interface which is currently in progress.
 
 Upon installing, some public routes will become instantly available to use.
 
@@ -22,47 +22,45 @@ Upon installing, some public routes will become instantly available to use.
 
 SafeData respects the same MasterData routes which can be accessed by replacing `api/dataentities` for `safedata`:
 
-Let's say we need to query the address `AD` entity by the addressName (`addressName=12345`):
+For example, you need to query the address `AD` entity by the addressName (`addressName=12345`):
 
-#####For IO Stores:
-You can use it directly like this:
+#### For IO Stores:
+You can use it directly, check the following:
 
 `GET https://myaccount.myvtex.com/safedata/AD/search?_where=addressName=12345`
 
-#####For Non-IO Stores:
+#### For Non-IO Stores:
 
-If you're implementing SafeData in a store which doesn't use Store Framework, you need to insert the path `api/io` to your endpoint before `safedata`, like this:
+If you are implementing SafeData in a store which does not use Store Framework, you need to insert the path `api/io` to your endpoint before `safedata`, for example:
 `GET https://myaccount.myvtex.com/api/io/safedata/AD/search?_where=addressName=12345`
 
 ## Supported Routes
 
 As of this writing, SafeData supports the following routes:
 
-Get document:
+- Get document:
 `GET /safedata/{entity}/documents/{documentId}`
 
-Search documents:
+- Search documents:
 `GET /safedata/{entity}/search`
 
-Create document:
+- Create document:
 `POST /safedata/{entity}/documents`
 
-Create or update document:
+- Create or update document:
 `PATCH /safedata/{entity}/documents`
 
-Entire document update:
+- Entire document update:
 `PUT /safedata/{entity}/documents/{documentId}`
 
-Partial document update:
+- Partial document update:
 `PATCH /safedata/{entity}/documents/{documentId}`
 
-All underscore query parameters are supported (_where, _fields, _schema and so on)
+All underscore query parameters are supported (_where, _fields, _schema and so on).
 
 ## Working with custom checkout fields
 
-When a client is making their first purchase, the `CL` entity may be created preemptively if the store has specific customizations to include new fields in the checkout process (e.g. birth date). This could cause problems since SafeData forbids customers to change personal data when they're not logged in. To avoid this problem, you can add the query parameter `_orderFormId` so SafeData can ensure the customer can safely change their information since it's their first checkout.
-
-Example:
+When a client is making their first purchase, the `CL` entity may be created preemptively if the store has specific customizations to include new fields in the checkout process, i.e., birth date. This could cause problems since SafeData forbids customers to change personal data when they are not logged in. To avoid this problem, you can add the query parameter `_orderFormId` so SafeData can ensure the customer can safely change their information since it's their first checkout. See the following example:
 
 `PATCH /safedata/CL/documents?_orderFormId=7217c9c7413142dd93e3b715f95cd03d` with this payload:
 ```json
@@ -72,7 +70,7 @@ Example:
 }
 ```
 
-When this request is called for the first time the user does not exist, so it's allowed to be created anonymously.
+When this request is called for the first time the user does not exist, so it is allowed to be created anonymously.
 
 In subsequent calls, SafeData checks the `_orderFormId` to ensure the user was created in this checkout session, so they can update their information without asking for credentials.
 
@@ -88,7 +86,7 @@ The whole process is based on the `CL` entity, which is used as a guide to ident
 
 This is done through a field comparison between `CL` and whatever entity is being queried. For instance, when searching for documents of the `AD` entity, we compare their `userId` to the `id` found in the `CL` entity, and the action is only allowed if they match.
 
-Please be aware that the comparison fields MUST be searchable/filterable. (They don't have to be public though, and in fact making any fields public is disencouraged)
+> ⚠️ *The comparison fields **must** be searchable. However, they do not have to be public, and we do not recommend making any fields public.*
 
 It is possible to allow other MasterData entities to follow these rules by registering them on the app settings:
 
