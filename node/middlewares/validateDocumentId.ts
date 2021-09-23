@@ -1,3 +1,4 @@
+import { StatusCodes } from '../utils/httpUtils'
 import { setContextResult } from '../utils/setContextResult'
 
 export async function validateDocumentId(
@@ -15,7 +16,7 @@ export async function validateDocumentId(
   if (route === 'documentId' && !id) {
     setContextResult({
       ctx,
-      statusCode: 400,
+      statusCode: StatusCodes.BAD_REQUEST,
       logInfo: {
         needsLogging: true,
         logResult: 'invalid',
@@ -40,7 +41,7 @@ export async function validateDocumentId(
     ) {
       setContextResult({
         ctx,
-        statusCode: 403,
+        statusCode: StatusCodes.FORBIDDEN,
         logInfo: {
           needsLogging: true,
           logResult: 'forbidden',

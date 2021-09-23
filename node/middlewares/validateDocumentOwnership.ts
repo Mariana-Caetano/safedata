@@ -1,3 +1,4 @@
+import { StatusCodes } from '../utils/httpUtils'
 import { setContextResult } from '../utils/setContextResult'
 
 export async function validateDocumentOwnership(
@@ -18,7 +19,7 @@ export async function validateDocumentOwnership(
     ) {
       setContextResult({
         ctx,
-        statusCode: 403,
+        statusCode: StatusCodes.FORBIDDEN,
         logInfo: {
           needsLogging: true,
           logResult: 'forbidden',

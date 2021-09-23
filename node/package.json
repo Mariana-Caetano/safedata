@@ -1,8 +1,10 @@
 {
   "dependencies": {
     "@vtex/clients": "^2.13.0",
+    "camelcase": "^6.2.0",
     "co-body": "^6.0.0",
     "ramda": "^0.25.0",
+    "transform-obj-keys": "^3.0.0",
     "ts-jest": "^26.5.6"
   },
   "devDependencies": {
@@ -10,7 +12,7 @@
     "@types/jest": "^24.0.18",
     "@types/node": "^12.0.0",
     "@types/ramda": "types/npm-ramda#dist",
-    "@vtex/api": "6.42.1",
+    "@vtex/api": "6.43.1",
     "@vtex/test-tools": "^1.0.0",
     "@vtex/tsconfig": "^0.5.6",
     "typescript": "3.9.7"

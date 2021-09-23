@@ -1,4 +1,6 @@
 import log from './log'
+import type { OperationResult } from '../typings/operationResult'
+import { isSuccessfulStatusCode } from './httpUtils'
 
 export const setContextResult = ({
   ctx,
@@ -9,10 +11,12 @@ export const setContextResult = ({
   statusCode: number
   logInfo: {
     needsLogging: boolean
-    logResult?: 'unauthorized' | 'forbidden' | 'notfound' | 'invalid' | 'ok'
+    logResult?: OperationResult
     logReason?: string
   }
 }) => {
+  ctx.state.result =
+    logResult ?? (isSuccessfulStatusCode(statusCode) ? 'ok' : 'invalid')
   ctx.status = statusCode
   if (needsLogging && logResult) {
     log({

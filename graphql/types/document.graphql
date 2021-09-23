@@ -1,0 +1,20 @@
+input Document {
+  fields: [Field]
+}
+
+input Field {
+  key: String
+  value: String
+}
+
+type DocumentResponse {
+  id: String
+  href: String
+  documentId: String
+  result: String
+  statusCode: Int
+}
+
+input DocumentInput {
+  document: Document
+}

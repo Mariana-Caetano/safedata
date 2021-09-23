@@ -1,3 +1,4 @@
+import { StatusCodes } from '../utils/httpUtils'
 import { setContextResult } from '../utils/setContextResult'
 
 export async function update(ctx: Context, next: () => Promise<unknown>) {
@@ -16,7 +17,7 @@ export async function update(ctx: Context, next: () => Promise<unknown>) {
   } catch (error) {
     setContextResult({
       ctx,
-      statusCode: 500,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       logInfo: {
         needsLogging: true,
         logResult: 'invalid',
@@ -29,7 +30,7 @@ export async function update(ctx: Context, next: () => Promise<unknown>) {
   ctx.body = document
   setContextResult({
     ctx,
-    statusCode: 200,
+    statusCode: StatusCodes.OK,
     logInfo: {
       needsLogging: false,
     },

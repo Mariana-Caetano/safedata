@@ -58,6 +58,18 @@ As of this writing, SafeData supports the following routes:
 
 All underscore query parameters are supported (_where, _fields, _schema and so on).
 
+## GraphQL interface
+
+SafeData also provides a `patchDocument` mutation in GraphQL which enables react components (IO) to create/update documents in MasterData. 
+
+The schema is as follows:
+
+![GraphQL](https://user-images.githubusercontent.com/1629129/127065235-fcf682d2-4b15-42d2-8d9b-b7b2df7d1d81.png)
+
+`fields` is a Key/Value pair for each MD field.
+
+This is still a work-in-progress, so for now only the `PATCH` functionality is available.
+
 ## Working with custom checkout fields
 
 When a client is making their first purchase, the `CL` entity may be created preemptively if the store has specific customizations to include new fields in the checkout process, i.e., birth date. This could cause problems since SafeData forbids customers to change personal data when they are not logged in. To avoid this problem, you can add the query parameter `_orderFormId` so SafeData can ensure the customer can safely change their information since it's their first checkout. See the following example:

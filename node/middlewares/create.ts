@@ -1,3 +1,7 @@
+import camelCase from 'camelcase'
+import transformObjKeys from 'transform-obj-keys'
+
+import { StatusCodes } from '../utils/httpUtils'
 import { setContextResult } from '../utils/setContextResult'
 
 export async function create(ctx: Context, next: () => Promise<unknown>) {
@@ -33,7 +37,7 @@ export async function create(ctx: Context, next: () => Promise<unknown>) {
     } else {
       setContextResult({
         ctx,
-        statusCode: 401,
+        statusCode: StatusCodes.UNAUTHORIZED,
         logInfo: {
           needsLogging: true,
           logResult: 'unauthorized',
@@ -54,13 +58,14 @@ export async function create(ctx: Context, next: () => Promise<unknown>) {
     return
   }
 
-  await createOrUpdateDocument(ctx, dataEntity, document)
+  const documentResult = await createOrUpdateDocument(ctx, dataEntity, document)
 
-  ctx.body = document
+  // transforms documentResult to camelCase since the MasterData API returns all data in PascalCase
+  ctx.body = transformObjKeys({ ...document, ...documentResult }, camelCase)
 
   setContextResult({
     ctx,
-    statusCode: 200,
+    statusCode: StatusCodes.OK,
     logInfo: {
       needsLogging: false,
     },
@@ -75,17 +80,19 @@ async function createOrUpdateDocument(
   document: MasterDataEntity
 ) {
   try {
-    await ctx.clients.masterdata.createOrUpdatePartialDocument({
+    return await ctx.clients.masterdata.createOrUpdatePartialDocument({
       dataEntity,
       fields: document,
       schema: ctx.query._schema,
     })
   } catch (error) {
     // masterdata returns 304 when the document already exists and is not modified as a result of the operation
-    if (error.response.status !== 304) {
+    if (error.response.status !== StatusCodes.NOT_MODIFIED) {
       ctx.vtex.logger.error(error)
       throw error
     }
+
+    return null
   }
 }
 
@@ -125,7 +132,7 @@ async function hasInvalidOrderFormData({
   ) {
     setContextResult({
       ctx,
-      statusCode: 403,
+      statusCode: StatusCodes.FORBIDDEN,
       logInfo: {
         needsLogging: true,
         logResult: 'forbidden',
@@ -167,7 +174,7 @@ async function hasInvalidMatchingDocument({
   if (matchingDocuments.length > 0) {
     setContextResult({
       ctx,
-      statusCode: 403,
+      statusCode: StatusCodes.FORBIDDEN,
       logInfo: {
         needsLogging: true,
         logResult: 'forbidden',

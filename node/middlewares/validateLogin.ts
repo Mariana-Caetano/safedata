@@ -1,3 +1,4 @@
+import { StatusCodes } from '../utils/httpUtils'
 import { setContextResult } from '../utils/setContextResult'
 
 export async function validateLogin(
@@ -15,7 +16,7 @@ export async function validateLogin(
   ) {
     setContextResult({
       ctx,
-      statusCode: 401,
+      statusCode: StatusCodes.UNAUTHORIZED,
       logInfo: {
         needsLogging: true,
         logResult: 'unauthorized',

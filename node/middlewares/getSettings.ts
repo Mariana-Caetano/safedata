@@ -1,5 +1,6 @@
 import adConfiguration from '../constants/adConfiguration'
 import clConfiguration from '../constants/clConfiguration'
+import { StatusCodes } from '../utils/httpUtils'
 import { setContextResult } from '../utils/setContextResult'
 import SettingsCache, {
   DEFAULT_SETTINGS_CACHE_MAX_AGE_IN_MS,
@@ -39,7 +40,7 @@ export async function getSettings(ctx: Context, next: () => Promise<unknown>) {
   if (!entitySettings) {
     setContextResult({
       ctx,
-      statusCode: 403,
+      statusCode: StatusCodes.FORBIDDEN,
       logInfo: {
         needsLogging: true,
         logResult: 'forbidden',
