@@ -3,7 +3,7 @@
   "vendor": "vtex",
   "version": "0.5.1",
   "title": "Safedata",
-  "description": "Reference app for VTEX IO Services",
+  "description": "An authorization middleware to work with sensitive data on MasterData.",
   "mustUpdateAt": "2018-01-04",
   "categories": [],
   "dependencies": {},
@@ -52,14 +52,6 @@
     "title": "Safedata",
     "type": "object",
     "properties": {
-      "updateableClientFields": {
-        "title": "Updateable fields on client (CL) entity",
-        "default": [],
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      },
       "entityConfigurations": {
         "title": "Entity Configurations",
         "type": "array",
@@ -68,9 +60,7 @@
             "entityAcronym": "AD",
             "fieldToMatchOnEntity": "userId",
             "fieldToMatchOnClient": "id",
-            "canCreate": true,
-            "canDelete": true,
-            "updateableFields": []
+            "canCreate": true
           }
         ],
         "items": {
@@ -91,22 +81,20 @@
             "canCreate": {
               "type": "boolean",
               "title": "Allow creating objects anonymously?"
-            },
-            "canDelete": {
-              "type": "boolean",
-              "title": "Is the user allowed to delete their own records?"
-            },
-            "updateableFields": {
-              "type": "array",
-              "title": "Which fields is the user allowed to update?",
-              "items": {
-                "type": "string"
-              }
             }
           }
         }
       }
     }
+  },
+  "billingOptions": {
+    "type": "free",
+    "support": {
+      "url": "https://support.vtex.com/hc/requests"
+    },
+    "availableCountries": [
+      "*"
+    ]
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
