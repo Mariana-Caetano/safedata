@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial GraphQL support (patchDocument mutation which allows document creation/update)
 
+## [0.5.1] - 2021-09-17
+
+## [0.5.0] - 2021-09-16
+
 ## [0.4.1] - 2021-07-13
 
 ### Changed
